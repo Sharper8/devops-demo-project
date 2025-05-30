@@ -20,6 +20,21 @@ spec:
           env:
             - name: discovery.type
               value: single-node
+            - name: ES_JAVA_OPTS
+              value: "-Xms512m -Xmx512m"
+            - name: bootstrap.memory_lock
+              value: "true"
+            - name: cluster.name
+              value: "elasticsearch-cluster"
+            - name: xpack.security.enabled
+              value: "false"
+          resources:
+            requests:
+              memory: {{ .Values.resources.requests.memory | quote }}
+              cpu: {{ .Values.resources.requests.cpu | quote }}
+            limits:
+              memory: {{ .Values.resources.limits.memory | quote }}
+              cpu: {{ .Values.resources.limits.cpu | quote }}
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
           readinessProbe:
             exec:
@@ -38,3 +53,8 @@ spec:
           ports:
             - containerPort: 9200
             - containerPort: 9300
+          securityContext:
+            capabilities:
+              add:
+                - IPC_LOCK
+                - SYS_RESOURCE
